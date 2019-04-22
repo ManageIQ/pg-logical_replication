@@ -1,0 +1,12 @@
+sudo: required
+dist: xenial
+language: ruby
+rvm:
+  - 2.3.1
+before_install:
+  - gem install bundler
+  - source ${TRAVIS_BUILD_DIR}/ci/before_install.sh
+script: bundle exec rake spec:setup spec
+after_script: bundle exec codeclimate-test-reporter
+addons:
+  postgresql: "10"
