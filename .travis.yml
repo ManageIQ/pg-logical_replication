@@ -1,12 +1,21 @@
-sudo: required
+---
 dist: xenial
 language: ruby
+cache: bundler
 rvm:
-  - 2.3.1
+- 2.4.5
+- 2.5.3
 before_install:
-  - gem install bundler
-  - source ${TRAVIS_BUILD_DIR}/ci/before_install.sh
-script: bundle exec rake spec:setup spec
-after_script: bundle exec codeclimate-test-reporter
+- 'echo ''gem: --no-ri --no-rdoc --no-document'' > ~/.gemrc'
+- gem install bundler
+- source ${TRAVIS_BUILD_DIR}/ci/before_install.sh
+before_script:
+- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+  > ./cc-test-reporter
+- chmod +x ./cc-test-reporter
+- "./cc-test-reporter before-build"
+- bundle exec rake spec:setup
+after_script:
+- "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
 addons:
-  postgresql: "10"
+  postgresql: '10'
