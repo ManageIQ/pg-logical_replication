@@ -1,40 +1,30 @@
 ---
-exclude_paths:
-- ".git/"
-- "**.xml"
-- "**.yaml"
-- "**.yml"
-- "spec/"
-- "ci/"
-engines:
-  brakeman:
-    # very slow :sad_panda:
+version: '2'
+checks:
+  argument-count:
     enabled: false
-  bundler-audit:
-    # requires Gemfile.lock
+  complex-logic:
     enabled: false
-  duplication:
-    enabled: true
+  file-lines:
+    enabled: false
+  method-complexity:
     config:
-      languages:
-      - ruby
-  fixme:
-    # let's enable later
+      threshold: 11
+  method-count:
     enabled: false
-  markdownlint:
-    # let's enable later
+  method-lines:
     enabled: false
-  rubocop:
-    enabled: true
-    config: '.rubocop_cc.yml'
+  nested-control-flow:
+    enabled: false
+  return-statements:
+    enabled: false
 prepare:
   fetch:
-  - url: "https://raw.githubusercontent.com/ManageIQ/guides/master/.rubocop_base.yml"
+  - url: https://raw.githubusercontent.com/ManageIQ/guides/master/.rubocop_base.yml
     path: ".rubocop_base.yml"
-  - url: "https://raw.githubusercontent.com/ManageIQ/guides/master/.rubocop_cc_base.yml"
+  - url: https://raw.githubusercontent.com/ManageIQ/guides/master/.rubocop_cc_base.yml
     path: ".rubocop_cc_base.yml"
-ratings:
-  paths:
-  - Gemfile.lock
-  - "**.rake"
-  - "**.rb"
+plugins:
+  rubocop:
+    enabled: true
+    config: ".rubocop_cc.yml"

@@ -1,10 +1,10 @@
 # PG::LogicalReplication
 
 [![Gem Version](https://badge.fury.io/rb/pg-logical_replication.svg)](http://badge.fury.io/rb/pg-logical_replication)
-[![Build Status](https://travis-ci.org/ManageIQ/pg-logical_replication.svg)](https://travis-ci.org/ManageIQ/pg-logical_replication)
-[![Code Climate](https://codeclimate.com/github/ManageIQ/pg-logical_replication.svg)](https://codeclimate.com/github/ManageIQ/pg-logical_replication)
-[![Test Coverage](https://codeclimate.com/github/ManageIQ/pg-logical_replication/badges/coverage.svg)](https://codeclimate.com/github/ManageIQ/pg-logical_replication/coverage)
-[![Dependency Status](https://gemnasium.com/ManageIQ/pg-logical_replication.svg)](https://gemnasium.com/ManageIQ/pg-logical_replication)
+[![Build Status](https://travis-ci.org/ManageIQ/pg-logical_replication.svg?branch=master)](https://travis-ci.org/ManageIQ/pg-logical_replication)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9967445630b9e8ff2fe5/maintainability)](https://codeclimate.com/github/ManageIQ/pg-logical_replication/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/9967445630b9e8ff2fe5/test_coverage)](https://codeclimate.com/github/ManageIQ/pg-logical_replication/test_coverage)
+[![Security](https://hakiri.io/github/ManageIQ/pg-logical_replication/master.svg)](https://hakiri.io/github/ManageIQ/pg-logical_replication/master)
 
 ## Installation
 
@@ -31,4 +31,8 @@ To install this gem onto your local machine, run `bundle exec rake install`.
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/ManageIQ/pg-logical_replication.
+
+## License
+
+This project is available as open source under the terms of the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
