@@ -197,6 +197,10 @@ module PG
         SQL
       end
 
+      def publishes?(publication_name)
+        publications.any? { |p| p["name"] == publication_name }
+      end
+
       # Creates a new publication
       #
       # @param name [String] publication name

@@ -93,6 +93,16 @@ describe PG::LogicalReplication::Client do
 
     let(:publication) { pub_client.publications.first }
 
+    describe "#publishes?" do
+      it "returns true for and existing publication" do
+        expect(pub_client.publishes?(pub_name)).to be true
+      end
+
+      it "returns false for a non-existing publication" do
+        expect(pub_client.publishes?("foo")).to be false
+      end
+    end
+
     describe "#alter_publication_options" do
       it "changes which operations are replicated" do
         pub_client.alter_publication_options(pub_name, {'publish' => 'insert'})
