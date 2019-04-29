@@ -172,6 +172,13 @@ module PG
         SQL
       end
 
+      # Returns if this database is subscribing to any publications
+      #
+      # @return [Boolean] true if there are any subscriptions, false otherwise
+      def subscriber?
+        subscriptions.any?
+      end
+
       # Lists the current publications
       #
       # @return [Array<String>] publication names

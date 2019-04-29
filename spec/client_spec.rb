@@ -149,6 +149,17 @@ describe PG::LogicalReplication::Client do
       sub_client.create_subscription(sub_name, subscription_conninfo, [pub_name], sub_options)
     end
 
+    describe "#subscriber?" do
+      it "returns true if there is a subscription" do
+        expect(sub_client.subscriber?).to be true
+      end
+
+      it "returns false if there are no subscriptions" do
+        sub_client.drop_subscription(sub_name)
+        expect(sub_client.subscriber?).to be false
+      end
+    end
+
     describe "#create_subscription" do
       it "creates a subscription for the given publication" do
         subs = sub_client.subscriptions
