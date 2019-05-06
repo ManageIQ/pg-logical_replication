@@ -46,7 +46,7 @@ module PG
       def safe_value(key, value)
         case VALUE_TYPES_BY_KEY[key]
         when "string"
-          quote_string(value)
+          value == "NONE" ? "NONE" : quote_string(value)
         when "bool"
           value ? "true" : "false"
         else

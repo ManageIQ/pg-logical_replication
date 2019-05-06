@@ -81,6 +81,15 @@ describe PG::LogicalReplication::CommandBuilder do
         expect(command).to eq("ALTER SUBSCRIPTION test SET (\"enabled\" = false, \"slot_name\" = 'test_slot')")
       end
 
+      it "doesn't quote NONE" do
+        base_command = "ALTER SUBSCRIPTION test"
+        options      = {
+          "slot_name" => "NONE"
+        }
+        command = subject.command_with_options(base_command, "SET", options)
+        expect(command).to eq("ALTER SUBSCRIPTION test SET (\"slot_name\" = NONE)")
+      end
+
       it "builds options correctly for WITH" do
         base_command = "ALTER SUBSCRIPTION test SET PUBLICATION test, test2"
         options      = {
