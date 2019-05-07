@@ -142,9 +142,10 @@ module PG
 
       # Shows status and basic information about all subscriptions
       #
-      # @return [Hash] a hash with the subscription information
+      # @return [Array<Hash>] a list of subscriptions
       #   keys:
       #     subscription_name
+      #     database_name
       #     owner
       #     worker_count
       #     enabled
