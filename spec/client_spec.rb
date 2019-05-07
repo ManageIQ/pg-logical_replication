@@ -159,6 +159,14 @@ describe PG::LogicalReplication::Client do
       sub_client.create_subscription(sub_name, subscription_conninfo, [pub_name], sub_options)
     end
 
+    describe "#subscriptions" do
+      it "filters the subscriptions by database name" do
+        expect(sub_client.subscriptions.count).to eq(1)
+        expect(sub_client.subscriptions("foo").count).to eq(0)
+        expect(sub_client.subscriptions("logical_test_target").count).to eq(1)
+      end
+    end
+
     describe "#subscriber?" do
       it "returns true if there is a subscription" do
         expect(sub_client.subscriber?).to be true
@@ -177,8 +185,9 @@ describe PG::LogicalReplication::Client do
 
         sub = subs.first
         expect(sub["subscription_name"]).to eq(sub_name)
-        expect(sub["publications"]).to eq([pub_name])
+        expect(sub["database_name"]).to eq("logical_test_target")
         expect(sub["enabled"]).to be true
+        expect(sub["publications"]).to eq([pub_name])
       end
     end
 
