@@ -142,34 +142,54 @@ module PG
 
       # Shows status and basic information about all subscriptions
       #
-      # @return [Hash] a hash with the subscription information
+      # @return [Array<Hash>] a list of subscriptions
       #   keys:
       #     subscription_name
+      #     database_name
       #     owner
+      #     worker_count
       #     enabled
       #     subscription_dsn
       #     slot_name
       #     publications
       #     remote_replication_lsn
       #     local_replication_lsn
-      def subscriptions
-        typed_exec(<<-SQL).to_a
+      def subscriptions(dbname = nil)
+        subscriptions = typed_exec(<<-SQL).to_a
           SELECT
-            sub.subname::TEXT     AS subscription_name,
-            pg_user.usename::TEXT AS owner,
-            sub.subenabled        AS enabled,
-            sub.subconninfo       AS subscription_dsn,
-            sub.subslotname::TEXT AS slot_name,
-            sub.subpublications   AS publications,
-            stat.remote_lsn::TEXT AS remote_replication_lsn,
-            stat.local_lsn::TEXT  AS local_replication_lsn
-          FROM 
+            sub.subname::TEXT         AS subscription_name,
+            pg_database.datname::TEXT AS database_name,
+            pg_user.usename::TEXT     AS owner,
+            COUNT(sub_stat.pid)       AS worker_count,
+            sub.subenabled            AS enabled,
+            sub.subconninfo           AS subscription_dsn,
+            sub.subslotname::TEXT     AS slot_name,
+            sub.subpublications       AS publications,
+            stat.remote_lsn::TEXT     AS remote_replication_lsn,
+            stat.local_lsn::TEXT      AS local_replication_lsn
+          FROM
             pg_subscription AS sub
             JOIN pg_user
               ON sub.subowner = usesysid
+            JOIN pg_database
+              ON sub.subdbid = pg_database.oid
             LEFT JOIN pg_replication_origin_status stat
               ON concat('pg_', sub.oid) = stat.external_id
+            LEFT JOIN pg_stat_subscription sub_stat
+              ON sub_stat.subid = sub.oid AND sub_stat.pid IS NOT NULL
+          GROUP BY
+            sub.subname,
+            pg_database.datname,
+            pg_user.usename,
+            sub.subenabled,
+            sub.subconninfo,
+            sub.subslotname,
+            sub.subpublications,
+            stat.remote_lsn,
+            stat.local_lsn
         SQL
+
+        dbname ? subscriptions.select { |s| s["database_name"] == dbname } : subscriptions
       end
 
       # Returns if this database is subscribing to any publications
