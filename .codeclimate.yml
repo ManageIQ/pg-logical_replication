@@ -1,4 +1,3 @@
----
 version: '2'
 checks:
   argument-count:
@@ -20,11 +19,16 @@ checks:
     enabled: false
 prepare:
   fetch:
-  - url: https://raw.githubusercontent.com/ManageIQ/guides/master/.rubocop_base.yml
+  - url: https://raw.githubusercontent.com/ManageIQ/manageiq-style/master/.rubocop_base.yml
     path: ".rubocop_base.yml"
-  - url: https://raw.githubusercontent.com/ManageIQ/guides/master/.rubocop_cc_base.yml
+  - url: https://raw.githubusercontent.com/ManageIQ/manageiq-style/master/.rubocop_cc_base.yml
     path: ".rubocop_cc_base.yml"
+  - url: https://raw.githubusercontent.com/ManageIQ/manageiq-style/master/styles/base.yml
+    path: styles/base.yml
+  - url: https://raw.githubusercontent.com/ManageIQ/manageiq-style/master/styles/cc_base.yml
+    path: styles/cc_base.yml
 plugins:
   rubocop:
     enabled: true
     config: ".rubocop_cc.yml"
+    channel: rubocop-0-82
