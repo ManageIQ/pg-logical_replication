@@ -313,8 +313,16 @@ module PG
       end
 
       def typed_exec(sql, *params)
-        result = connection.async_exec(sql, params, nil, PG::BasicTypeMapForQueries.new(connection))
-        result.map_types!(PG::BasicTypeMapForResults.new(connection))
+        result = connection.async_exec(sql, params, nil, type_map_for_queries)
+        result.map_types!(type_map_for_results)
+      end
+
+      def type_map_for_queries
+        @type_map_for_queries ||= PG::BasicTypeMapForQueries.new(connection)
+      end
+
+      def type_map_for_results
+        @type_map_for_results ||= PG::BasicTypeMapForResults.new(connection)
       end
     end
   end
