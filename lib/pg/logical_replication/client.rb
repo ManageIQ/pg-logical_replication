@@ -6,6 +6,14 @@ module PG
       attr_reader :connection
       attr_reader :command_builder
 
+      def self.type_map_for_queries(connection)
+        @type_map_for_queries ||= PG::BasicTypeMapForQueries.new(connection)
+      end
+
+      def self.type_map_for_results(connection)
+        @type_map_for_results ||= PG::BasicTypeMapForResults.new(connection)
+      end
+
       # @param connection [PG::Connection] Database Connection
       def initialize(connection)
         @connection      = connection
@@ -313,8 +321,8 @@ module PG
       end
 
       def typed_exec(sql, *params)
-        result = connection.async_exec(sql, params, nil, PG::BasicTypeMapForQueries.new(connection))
-        result.map_types!(PG::BasicTypeMapForResults.new(connection))
+        result = connection.async_exec(sql, params, nil, self.class.type_map_for_queries(connection))
+        result.map_types!(self.class.type_map_for_results(connection))
       end
     end
   end
