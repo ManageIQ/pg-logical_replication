@@ -83,6 +83,13 @@ module PG
         typed_exec("SELECT pg_create_logical_replication_slot(#{connection.escape_literal(name)}, 'pgoutput')")
       end
 
+      # Drops the physical or logical replication slot.  Note, you must be on the same database a logical slot was created.
+      #
+      # @param name [String] replication slot name
+      def drop_replication_slot(name)
+        typed_exec("SELECT pg_drop_replication_slot(#{connection.escape_literal(name)})")
+      end
+
       # Updates a subscription connection string
       #
       # @param name [String] subscription name

@@ -223,6 +223,14 @@ describe PG::LogicalReplication::Client do
       end
     end
 
+    describe "#drop_replication_slot" do
+      it "drops the logical replication slot with the given name" do
+        pub_client.create_logical_replication_slot("test_drop")
+        pub_client.drop_replication_slot("test_drop")
+        expect(pub_client.replication_slots.field_values("slot_name")).not_to include("test_drop")
+      end
+    end
+
     describe "#set_subscription_conninfo" do
       it "alters the subscription conninfo string" do
         new_conninfo = subscription_conninfo.merge({"fallback_application_name" => "things"})
