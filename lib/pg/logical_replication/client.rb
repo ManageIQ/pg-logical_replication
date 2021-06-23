@@ -203,8 +203,8 @@ module PG
       # Returns if this database is subscribing to any publications
       #
       # @return [Boolean] true if there are any subscriptions, false otherwise
-      def subscriber?
-        subscriptions.any?
+      def subscriber?(dbname = nil)
+        subscriptions(dbname).any?
       end
 
       # Lists the current publications

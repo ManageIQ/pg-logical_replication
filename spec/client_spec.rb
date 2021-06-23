@@ -172,6 +172,23 @@ describe PG::LogicalReplication::Client do
         expect(sub_client.subscriber?).to be true
       end
 
+      # Databases on the same cluster share the subscription information
+      it "returns true from publisher" do
+        expect(pub_client.subscriber?).to be true
+      end
+
+      it "returns true from subscriber if subscriber database specified" do
+        expect(sub_client.subscriber?(sub_connection.db)).to be true
+      end
+
+      it "returns false from subscriber if publisher database specified" do
+        expect(sub_client.subscriber?(pub_connection.db)).to be false
+      end
+
+      it "returns false from publisher if publisher database specified" do
+        expect(pub_client.subscriber?(pub_connection.db)).to be false
+      end
+
       it "returns false if there are no subscriptions" do
         sub_client.drop_subscription(sub_name)
         expect(sub_client.subscriber?).to be false
