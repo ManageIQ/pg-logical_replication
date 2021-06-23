@@ -151,7 +151,7 @@ describe PG::LogicalReplication::Client do
     # subscription.
     # See: https://www.postgresql.org/docs/10/sql-createsubscription.html
     def create_subscription
-      pub_connection.async_exec("select pg_create_logical_replication_slot('#{sub_name}', 'pgoutput')")
+      pub_client.create_logical_replication_slot(sub_name)
       sub_options = {
         'create_slot' => false,
         'slot_name'   => sub_name
@@ -213,6 +213,13 @@ describe PG::LogicalReplication::Client do
         sub_client.drop_subscription(sub_name)
         expect(sub_client.subscriptions.count).to eq(0)
         expect { sub_client.drop_subscription(sub_name, true) }.not_to raise_error
+      end
+    end
+
+    describe "#create_logical_replication_slot" do
+      it "creates a logical replication slot with the given name" do
+        pub_client.create_logical_replication_slot("test_create")
+        expect(pub_client.replication_slots.field_values("slot_name")).to include("test_create")
       end
     end
 

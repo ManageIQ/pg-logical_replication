@@ -76,6 +76,13 @@ module PG
         typed_exec("DROP SUBSCRIPTION#{" IF EXISTS" if ifexists} #{connection.quote_ident(name)}")
       end
 
+      # Creates a logical replication slot
+      #
+      # @param name [String] logical replication slot name
+      def create_logical_replication_slot(name)
+        typed_exec("SELECT pg_create_logical_replication_slot(#{connection.escape_literal(name)}, 'pgoutput')")
+      end
+
       # Updates a subscription connection string
       #
       # @param name [String] subscription name
@@ -205,6 +212,22 @@ module PG
       # @return [Boolean] true if there are any subscriptions, false otherwise
       def subscriber?(dbname = nil)
         subscriptions(dbname).any?
+      end
+
+      # Lists the current replication slots
+      #
+      # @return [Array<String>] replication slots
+      def replication_slots
+        typed_exec(<<-SQL)
+          SELECT
+            slot_name::TEXT,
+            plugin::TEXT,
+            slot_type::TEXT,
+            database::TEXT,
+            temporary,
+            active
+          FROM pg_replication_slots
+        SQL
       end
 
       # Lists the current publications
