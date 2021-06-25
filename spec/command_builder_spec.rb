@@ -81,6 +81,16 @@ describe PG::LogicalReplication::CommandBuilder do
         expect(command).to eq("ALTER SUBSCRIPTION test SET (\"enabled\" = false, \"slot_name\" = 'test_slot')")
       end
 
+      it "builds symbol keyed options correctly for SET" do
+        base_command = "ALTER SUBSCRIPTION test"
+        options      = {
+          :enabled   => false,
+          :slot_name => "test_slot"
+        }
+        command = subject.command_with_options(base_command, "SET", options)
+        expect(command).to eq("ALTER SUBSCRIPTION test SET (\"enabled\" = false, \"slot_name\" = 'test_slot')")
+      end
+
       it "doesn't quote NONE" do
         base_command = "ALTER SUBSCRIPTION test"
         options      = {
@@ -98,7 +108,15 @@ describe PG::LogicalReplication::CommandBuilder do
         command      = subject.command_with_options(base_command, "WITH", options)
         expect(command).to eq("ALTER SUBSCRIPTION test SET PUBLICATION test, test2 WITH (\"refresh\" = false)")
       end
+
+      it "builds symbol keyed options correctly for WITH" do
+        base_command = "ALTER SUBSCRIPTION test SET PUBLICATION test, test2"
+        options      = {
+          :refresh => false
+        }
+        command = subject.command_with_options(base_command, "WITH", options)
+        expect(command).to eq("ALTER SUBSCRIPTION test SET PUBLICATION test, test2 WITH (\"refresh\" = false)")
+      end
     end
   end
-
 end
