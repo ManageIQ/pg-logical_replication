@@ -51,6 +51,8 @@ module DatabaseHelper
   def self.drop_subscriptions
     conn = ConnectionHelper.target_database_connection
     conn.async_exec("SELECT subname::TEXT from pg_subscription").values.flatten.each do |s|
+      conn.async_exec("ALTER subscription #{s} DISABLE")
+      conn.async_exec("ALTER subscription #{s} SET (slot_name = NONE)")
       conn.async_exec("DROP SUBSCRIPTION #{s}")
     end
   end

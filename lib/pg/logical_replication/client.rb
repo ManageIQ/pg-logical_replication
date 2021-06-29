@@ -59,6 +59,8 @@ module PG
       # @param publications [Array<String>] publication names to subscribe to
       # @param options [Hash] optional parameters for CREATE SUBSCRIPTION
       def create_subscription(name, conninfo_hash, publications, options = {})
+        options[:slot_name] = name if !options.key?(:slot_name) && !options.key?("slot_name") && (options['create_slot'] == false || options[:create_slot] == false)
+
         connection_string = connection.escape_string(PG::Connection.parse_connect_args(conninfo_hash))
         base_command = <<-SQL
           CREATE SUBSCRIPTION #{connection.quote_ident(name)}

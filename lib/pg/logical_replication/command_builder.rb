@@ -26,7 +26,7 @@ module PG
 
       def parameters_list(options)
         options.to_a.map do |k, v|
-          "#{connection.quote_ident(k)} = #{safe_value(k, v)}"
+          "#{connection.quote_ident(k.to_s)} = #{safe_value(k.to_s, v)}"
         end.join(", ")
       end
 
