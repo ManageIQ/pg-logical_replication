@@ -50,7 +50,8 @@ module DatabaseHelper
 
   def self.drop_subscriptions
     conn = ConnectionHelper.target_database_connection
-    conn.async_exec("SELECT subname::TEXT from pg_subscription").values.flatten.each do |s|
+    # Subscriptions are visible from all databases in the cluster so we need to specify only the subs from the target database.
+    conn.async_exec("SELECT subname::TEXT FROM pg_subscription AS sub JOIN pg_database ON sub.subdbid = pg_database.oid WHERE pg_database.datname = current_database()").values.flatten.each do |s|
       conn.async_exec("ALTER subscription #{s} DISABLE")
       conn.async_exec("ALTER subscription #{s} SET (slot_name = NONE)")
       conn.async_exec("DROP SUBSCRIPTION #{s}")
@@ -66,7 +67,8 @@ module DatabaseHelper
 
   def self.drop_replication_slots
     conn = ConnectionHelper.source_database_connection
-    conn.async_exec("SELECT slot_name::TEXT FROM pg_replication_slots WHERE slot_type = 'logical' AND NOT active").values.flatten.each do |slot|
+    # replication_slots are visible from all databases in the cluster so we need to specify only the slots from the source database.
+    conn.async_exec("SELECT slot_name::TEXT FROM pg_replication_slots WHERE slot_type = 'logical' AND NOT active AND database = current_database()").values.flatten.each do |slot|
       conn.async_exec("SELECT pg_drop_replication_slot('#{slot}')")
     end
   end
