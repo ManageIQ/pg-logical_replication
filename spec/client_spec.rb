@@ -152,11 +152,7 @@ describe PG::LogicalReplication::Client do
     # See: https://www.postgresql.org/docs/10/sql-createsubscription.html
     def create_subscription
       pub_client.create_logical_replication_slot(sub_name)
-      sub_options = {
-        'create_slot' => false,
-        'slot_name'   => sub_name
-      }
-      sub_client.create_subscription(sub_name, subscription_conninfo, [pub_name], sub_options)
+      sub_client.create_subscription(sub_name, subscription_conninfo, [pub_name], :create_slot => false)
     end
 
     describe "#subscriptions" do
@@ -196,6 +192,9 @@ describe PG::LogicalReplication::Client do
     end
 
     describe "#create_subscription" do
+      let(:new_pub_name) { "other_publication" }
+      let(:new_sub_name) { "create_slot_test" }
+
       it "creates a subscription for the given publication" do
         subs = sub_client.subscriptions
         expect(subs.count).to eq(1)
@@ -205,6 +204,29 @@ describe PG::LogicalReplication::Client do
         expect(sub["database_name"]).to eq("logical_test_target")
         expect(sub["enabled"]).to be true
         expect(sub["publications"]).to eq([pub_name])
+      end
+
+      it "defaults slot_name to subscription name if create_slot => false passed without slot_name" do
+        sub_client.create_subscription(new_sub_name, subscription_conninfo, [new_pub_name], :create_slot => false)
+        sub = sub_client.subscriptions.detect { |s| s["subscription_name"] == new_sub_name }
+        expect(sub["slot_name"]).to eq(new_sub_name)
+        expect(pub_client.replication_slots.field_values("slot_name")).not_to include(new_sub_name)
+      end
+
+      it "accepts slot_name if provided with create_slot => false" do
+        slot_a = "slot_a"
+        sub_client.create_subscription(new_sub_name, subscription_conninfo, [new_pub_name], 'create_slot' => false, 'slot_name' => slot_a)
+        sub = sub_client.subscriptions.detect { |s| s["subscription_name"] == new_sub_name }
+        expect(sub["slot_name"]).to eq(slot_a)
+        expect(pub_client.replication_slots.field_values("slot_name")).not_to include(new_sub_name)
+      end
+
+      it "accepts slot_name if provided with create_slot => false with symbol keys" do
+        slot_a = "slot_a"
+        sub_client.create_subscription(new_sub_name, subscription_conninfo, [new_pub_name], :create_slot => false, :slot_name => slot_a)
+        sub = sub_client.subscriptions.detect { |s| s["subscription_name"] == new_sub_name }
+        expect(sub["slot_name"]).to eq(slot_a)
+        expect(pub_client.replication_slots.field_values("slot_name")).not_to include(new_sub_name)
       end
     end
 
