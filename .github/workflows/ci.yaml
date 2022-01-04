@@ -18,7 +18,7 @@ jobs:
         env:
           POSTGRESQL_USER: root
           POSTGRESQL_PASSWORD: smartvm
-          POSTGRESQL_DATABASE: vmdb_production
+          POSTGRESQL_DATABASE: temp
         options: >-
           --name postgres
           --volume /tmp/postgresql-cfg/:/opt/app-root/src/postgresql-cfg/
@@ -42,9 +42,18 @@ jobs:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
       timeout-minutes: 30
+    - name: Set up tests
+      run: bundle exec rake spec:setup
+      env:
+        POSTGRESQL_HOST: localhost
+        POSTGRESQL_USER: root
+        POSTGRESQL_PASSWORD: smartvm
     - name: Run tests
       run: bundle exec rake
       env:
+        POSTGRESQL_HOST: localhost
+        POSTGRESQL_USER: root
+        POSTGRESQL_PASSWORD: smartvm
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
     - if: ${{ github.ref == 'refs/heads/master' && matrix.ruby-version == '2.7' }}
       name: Report code coverage
