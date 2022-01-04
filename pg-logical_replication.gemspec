@@ -26,5 +26,5 @@ This gem provides a class with methods which map directly to the PostgreSQL DSL 
   spec.add_development_dependency "manageiq-style"
   spec.add_development_dependency "rake",          "~> 10.0"
   spec.add_development_dependency "rspec",         "~> 3.0"
-  spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "simplecov",     ">= 0.21.2"
 end

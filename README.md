@@ -1,7 +1,7 @@
 # PG::LogicalReplication
 
 [![Gem Version](https://badge.fury.io/rb/pg-logical_replication.svg)](http://badge.fury.io/rb/pg-logical_replication)
-[![Build Status](https://travis-ci.org/ManageIQ/pg-logical_replication.svg?branch=master)](https://travis-ci.org/ManageIQ/pg-logical_replication)
+[![CI](https://github.com/ManageIQ/pg-logical_replication/actions/workflows/ci.yaml/badge.svg)](https://github.com/ManageIQ/pg-logical_replication/actions/workflows/ci.yaml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9967445630b9e8ff2fe5/maintainability)](https://codeclimate.com/github/ManageIQ/pg-logical_replication/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/9967445630b9e8ff2fe5/test_coverage)](https://codeclimate.com/github/ManageIQ/pg-logical_replication/test_coverage)
 [![Security](https://hakiri.io/github/ManageIQ/pg-logical_replication/master.svg)](https://hakiri.io/github/ManageIQ/pg-logical_replication/master)
