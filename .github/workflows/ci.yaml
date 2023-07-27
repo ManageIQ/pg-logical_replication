@@ -32,10 +32,12 @@ jobs:
     - uses: actions/checkout@v3
     - name: Override postgres settings
       run: |
+        set -x
         sudo chown -R $(id -u):$(id -g) /tmp/postgresql-cfg
         cp -rf .github/ci/postgresql-cfg/* /tmp/postgresql-cfg
         /usr/bin/docker run --rm -v "/var/run/docker.sock":"/var/run/docker.sock" docker restart postgres
         until [ "`/usr/bin/docker inspect -f {{.State.Health.Status}} postgres`" == "healthy" ]; do sleep 0.5; done
+        set +x
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
