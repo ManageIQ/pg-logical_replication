@@ -32,11 +32,11 @@ jobs:
     - uses: actions/checkout@v3
     - name: Override postgres settings
       run: |
-        set -x
-        sudo chown -R $(id -u):$(id -g) /tmp/postgresql-cfg
-        cp -rf .github/ci/postgresql-cfg/* /tmp/postgresql-cfg
+        psql -c "ALTER SYSTEM SET wal_level = logical"
+        psql -c "ALTER SYSTEM SET max_worker_processes = 10"
+        psql -c "ALTER SYSTEM SET max_replication_slots = 10"
+        psql -c "ALTER SYSTEM SET max_wal_senders = 10"
         psql -c "SELECT pg_reload_conf()"
-        set +x
       env:
         PGHOST: localhost
         PGUSER: root
