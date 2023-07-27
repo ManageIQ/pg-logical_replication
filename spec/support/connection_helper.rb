@@ -1,7 +1,7 @@
 module ConnectionHelper
   def self.connection_for(dbname)
     require "pg"
-    PG::Connection.new("postgresql://#{ENV["POSTGRESQL_USER"]}:#{ENV["POSTGRESQL_PASSWORD"]}@#{ENV["POSTGRESQL_HOST"]}:5432/#{dbname}")
+    PG::Connection.new("postgresql://#{ENV["POSTGRESQL_USER"]}:#{ENV["POSTGRESQL_PASSWORD"]}@#{ENV["POSTGRESQL_HOST"]}:5432/#{dbname}?sslmode=disable")
   end
 
   def self.source_database_connection
