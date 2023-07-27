@@ -35,12 +35,13 @@ jobs:
         set -x
         sudo chown -R $(id -u):$(id -g) /tmp/postgresql-cfg
         cp -rf .github/ci/postgresql-cfg/* /tmp/postgresql-cfg
-        psql -c "SELECT pg_reload_conf()" -d postgres
+        psql -c "SELECT pg_reload_conf()"
         set +x
       env:
-        POSTGRESQL_HOST: localhost
-        POSTGRESQL_USER: root
-        POSTGRESQL_PASSWORD: smartvm
+        PGHOST: localhost
+        PGUSER: root
+        PGPASSWORD: smartvm
+        PGDATABASE: temp
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
