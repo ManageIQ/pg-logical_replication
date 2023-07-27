@@ -8,8 +8,6 @@ describe PG::LogicalReplication::Client do
   let(:pub_name) { "test_pub" }
   let(:sub_name) { "test_sub" }
 
-  before(:all) { DatabaseHelper.create_tables }
-
   around do |example|
     DatabaseHelper.with_clean_environment { example.call }
   end
