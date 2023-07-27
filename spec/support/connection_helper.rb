@@ -6,7 +6,8 @@ module ConnectionHelper
       :host     => ENV["POSTGRESQL_HOST"],
       :user     => ENV["POSTGRESQL_USER"],
       :password => ENV["POSTGRESQL_PASSWORD"],
-      :dbname   => dbname
+      :dbname   => dbname,
+      :sslmode  => "disable"
     }.compact
 
     PG::Connection.new(options)
