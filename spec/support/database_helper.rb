@@ -5,25 +5,6 @@ module DatabaseHelper
     %w(table1 table2 table3 table4)
   end
 
-  def self.create_tables
-    ConnectionHelper.with_each_connection do |conn|
-      tables.each do |t|
-        conn.async_exec(<<-SQL)
-          CREATE TABLE IF NOT EXISTS #{t} (
-            id   SERIAL PRIMARY KEY,
-            data VARCHAR(50)
-          )
-        SQL
-      end
-    end
-  end
-
-  def self.drop_tables
-    ConnectionHelper.with_each_connection do |conn|
-      tables.each { |t| conn.async_exec("DROP TABLE IF EXISTS #{t}") }
-    end
-  end
-
   def self.drop_subscriptions
     conn = ConnectionHelper.target_database_connection
     # Subscriptions are visible from all databases in the cluster so we need to specify only the subs from the target database.
