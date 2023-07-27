@@ -1,7 +1,10 @@
 module ConnectionHelper
   def self.connection_for(dbname)
     require "pg"
-    PG::Connection.new("postgresql://#{ENV["POSTGRESQL_USER"]}:#{ENV["POSTGRESQL_PASSWORD"]}@#{ENV["POSTGRESQL_HOST"]}:5432/#{dbname}?sslmode=disable")
+    conn_str = "postgresql://#{ENV["POSTGRESQL_USER"]}:#{ENV["POSTGRESQL_PASSWORD"]}@#{ENV["POSTGRESQL_HOST"]}:5432/#{dbname}?sslmode=disable"
+    PG::Connection.new(conn_str).tap do |c|
+      raise "Invalid connection" unless c.exec("SELECT 1").values == [["1"]]
+    end
   end
 
   def self.source_database_connection
