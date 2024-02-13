@@ -1,7 +1,8 @@
+---
 name: CI
-
-on: [push, pull_request]
-
+on:
+- push
+- pull_request
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -12,6 +13,7 @@ jobs:
         - '2.6'
         - '2.7'
         - '3.0'
+        - '3.1'
     services:
       postgres:
         image: manageiq/postgresql:13
@@ -19,13 +21,9 @@ jobs:
           POSTGRESQL_USER: root
           POSTGRESQL_PASSWORD: smartvm
           POSTGRESQL_DATABASE: vmdb_production
-        options: >-
-          --name postgres
-          --volume /tmp/postgresql-cfg/:/opt/app-root/src/postgresql-cfg/
-          --health-cmd pg_isready
-          --health-interval 2s
-          --health-timeout 5s
-          --health-retries 5
+        options: "--name postgres --volume /tmp/postgresql-cfg/:/opt/app-root/src/postgresql-cfg/
+          --health-cmd pg_isready --health-interval 2s --health-timeout 5s --health-retries
+          5"
         ports:
         - 5432:5432
     steps:
@@ -39,16 +37,16 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby-version }}
+        ruby-version: "${{ matrix.ruby-version }}"
         bundler-cache: true
       timeout-minutes: 30
     - name: Run tests
       run: bundle exec rake
       env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-    - if: ${{ github.ref == 'refs/heads/master' && matrix.ruby-version == '2.7' }}
+        CC_TEST_REPORTER_ID: "${{ secrets.CC_TEST_REPORTER_ID }}"
+    - if: "${{ github.ref == 'refs/heads/master' && matrix.ruby-version == '2.7' }}"
       name: Report code coverage
       continue-on-error: true
       uses: paambaati/codeclimate-action@v5
       env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        CC_TEST_REPORTER_ID: "${{ secrets.CC_TEST_REPORTER_ID }}"
