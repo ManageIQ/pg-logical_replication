@@ -47,6 +47,6 @@ jobs:
     - if: "${{ github.ref == 'refs/heads/master' && matrix.ruby-version == '2.7' }}"
       name: Report code coverage
       continue-on-error: true
-      uses: paambaati/codeclimate-action@v5
+      uses: paambaati/codeclimate-action@v6
       env:
         CC_TEST_REPORTER_ID: "${{ secrets.CC_TEST_REPORTER_ID }}"
