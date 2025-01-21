@@ -1,17 +1,18 @@
+---
 name: CI
-
-on: [push, pull_request]
-
+on:
+- push
+- pull_request
 jobs:
   ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         ruby-version:
-        - '2.5'
-        - '2.6'
-        - '2.7'
         - '3.0'
+        - '3.1'
+        - '3.2'
+        - '3.3'
     services:
       postgres:
         image: fryguy9/postgresql-with-config:latest
@@ -19,22 +20,18 @@ jobs:
           POSTGRESQL_USER: root
           POSTGRESQL_PASSWORD: smartvm
           POSTGRESQL_DATABASE: temp
-        options: >-
-          --name postgres
-          --health-cmd pg_isready
-          --health-interval 2s
-          --health-timeout 5s
-          --health-retries 5
+        options: "--name postgres --health-cmd pg_isready --health-interval 2s --health-timeout 5s
+          --health-retries 5"
         ports:
         - 5432:5432
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Verify libpq
       run: ls -al /usr/lib
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby-version }}
+        ruby-version: "${{ matrix.ruby-version }}"
         bundler-cache: true
       timeout-minutes: 30
     - name: Set up tests
@@ -50,9 +47,9 @@ jobs:
         POSTGRESQL_USER: root
         POSTGRESQL_PASSWORD: smartvm
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-    - if: ${{ github.ref == 'refs/heads/master' && matrix.ruby-version == '2.7' }}
+    - if: ${{ github.ref == 'refs/heads/master' && matrix.ruby-version == '3.3' }}
       name: Report code coverage
       continue-on-error: true
-      uses: paambaati/codeclimate-action@v5
+      uses: paambaati/codeclimate-action@v9
       env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        CC_TEST_REPORTER_ID: "${{ secrets.CC_TEST_REPORTER_ID }}"
