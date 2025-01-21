@@ -353,6 +353,9 @@ module PG
       end
 
       def typed_exec(sql, *params)
+        puts "sql: #{sql}"
+        puts "params: #{params.inspect}"
+        puts "type_map_for_queries: #{self.class.type_map_for_queries(connection).inspect}"
         result = connection.async_exec(sql, params, nil, self.class.type_map_for_queries(connection))
         result.map_types!(self.class.type_map_for_results(connection))
       end
