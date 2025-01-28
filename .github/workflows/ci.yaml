@@ -15,34 +15,38 @@ jobs:
         - '3.3'
     services:
       postgres:
-        image: manageiq/postgresql:13
+        image: fryguy9/postgresql-with-config:latest
         env:
           POSTGRESQL_USER: root
           POSTGRESQL_PASSWORD: smartvm
-          POSTGRESQL_DATABASE: vmdb_production
-        options: "--name postgres --volume /tmp/postgresql-cfg/:/opt/app-root/src/postgresql-cfg/
-          --health-cmd pg_isready --health-interval 2s --health-timeout 5s --health-retries
-          5"
+          POSTGRESQL_DATABASE: temp
+        options: "--name postgres --health-cmd pg_isready --health-interval 2s --health-timeout 5s
+          --health-retries 5"
         ports:
         - 5432:5432
     steps:
     - uses: actions/checkout@v4
-    - name: Override postgres settings
-      run: |
-        sudo chown -R $(id -u):$(id -g) /tmp/postgresql-cfg
-        cp -rf .github/ci/postgresql-cfg/* /tmp/postgresql-cfg
-        /usr/bin/docker run --rm -v "/var/run/docker.sock":"/var/run/docker.sock" docker restart postgres
-        until [ "`/usr/bin/docker inspect -f {{.State.Health.Status}} postgres`" == "healthy" ]; do sleep 0.5; done
+    - name: Verify libpq
+      run: ls -al /usr/lib
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: "${{ matrix.ruby-version }}"
         bundler-cache: true
       timeout-minutes: 30
+    - name: Set up tests
+      run: bundle exec rake spec:setup
+      env:
+        POSTGRESQL_HOST: localhost
+        POSTGRESQL_USER: root
+        POSTGRESQL_PASSWORD: smartvm
     - name: Run tests
       run: bundle exec rake
       env:
-        CC_TEST_REPORTER_ID: "${{ secrets.CC_TEST_REPORTER_ID }}"
+        POSTGRESQL_HOST: localhost
+        POSTGRESQL_USER: root
+        POSTGRESQL_PASSWORD: smartvm
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
     - if: ${{ github.ref == 'refs/heads/master' && matrix.ruby-version == '3.3' }}
       name: Report code coverage
       continue-on-error: true
