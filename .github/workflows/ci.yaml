@@ -1,8 +1,15 @@
----
 name: CI
 on:
-- push
-- pull_request
+  pull_request:
+  push:
+    branches-ignore:
+    - dependabot/*
+    - renovate/*
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+permissions:
+  contents: read
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -19,10 +26,8 @@ jobs:
         env:
           POSTGRESQL_USER: root
           POSTGRESQL_PASSWORD: smartvm
-          POSTGRESQL_DATABASE: temp # This database will not be used
-        options: "--name postgres --volume /tmp/postgresql-cfg/:/opt/app-root/src/postgresql-cfg/
-          --health-cmd pg_isready --health-interval 2s --health-timeout 5s --health-retries
-          5"
+          POSTGRESQL_DATABASE: temp
+        options: "--name postgres --volume /tmp/postgresql-cfg/:/opt/app-root/src/postgresql-cfg/ --health-cmd pg_isready --health-interval 2s --health-timeout 5s --health-retries 5"
         ports:
         - 5432:5432
     steps:
@@ -53,10 +58,4 @@ jobs:
         POSTGRESQL_HOST: localhost
         POSTGRESQL_USER: root
         POSTGRESQL_PASSWORD: smartvm
-        CC_TEST_REPORTER_ID: "${{ secrets.CC_TEST_REPORTER_ID }}"
-    - if: ${{ github.ref == 'refs/heads/master' && matrix.ruby-version == '3.3' }}
-      name: Report code coverage
-      continue-on-error: true
-      uses: paambaati/codeclimate-action@v9
-      env:
         CC_TEST_REPORTER_ID: "${{ secrets.CC_TEST_REPORTER_ID }}"
